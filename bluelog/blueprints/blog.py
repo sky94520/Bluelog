@@ -8,7 +8,7 @@ blog_bp = Blueprint('blog', __name__)
 
 @blog_bp.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('blog/index.html')
 
 
 @blog_bp.route('/category/<int:category_id>')
