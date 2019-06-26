@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+{% from 'macros.html' import render_field %}
+
+{% block title %}网站相关{% endblock %}
+
+{% block styles %}
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="//unpkg.com/vue/dist/vue.js"></script>
+    <script src="//unpkg.com/element-ui@2.9.1/lib/index.js"></script>
+{% endblock %}
+
+{% block content %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        let activeIndex = '3';
+    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/blog_base.js') }}"></script>
+{% endblock %}

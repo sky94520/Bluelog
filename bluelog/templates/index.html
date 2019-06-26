@@ -1,0 +1,164 @@
+{% from 'bootstrap/nav.html' import render_nav_item %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}sky{% endblock title %} - {{ admin.blog_title|default('Blog Title') }}</title>
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/%s.min.css' % request.cookies.get('theme', 'perfect_blue')) }}" type="text/css">
+        <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% endblock head %}
+</head>
+<body>
+{% block nav %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('blog.index') }}">{{ admin.blog_title }}</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
+                    aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav mr-auto">
+                    {{ render_nav_item('blog.index', 'Home') }}
+                    {{ render_nav_item('blog.about', 'About') }}
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+
+<main class="container">
+    {% for message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{ message[0] }}" role="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message[1] }}
+        </div>
+    {% endfor %}
+    <div class="page-header">
+        <h1 class="display-3">{{ admin.blog_title | default('Blog Title') }}</h1>
+        <h4 class="text-muted">&nbsp;{{ admin.blog_sub_title | default('Blog Subtitle') }}</h4>
+    </div>
+    {# 渲染内容 #}
+    {% raw %}
+    <div class="row" id="content">
+        <div class="col-sm-8">
+            <template v-for="(post,index) in posts">
+                <h3 class="text-primary">{{ post.title }}</h3>
+                <p>{{ post.body | truncate }}</p>
+                <small>
+                    评论数:<span class="text-primary">{{ post.comments }}</span>&nbsp;&nbsp;
+                    类别:<span class="text-primary">{{ post.category }}</span>
+                    <span class="float-right">{{ post.timestamp }}</span>
+                </small>
+                <hr v-if="index < posts.length - 1">
+            </template>
+    {% endraw %}
+            <div class="page-footer">
+                <nav aria-label="Page navigation">
+                    <ul class="pager">
+                        <li v-bind:class="is_previous" v-on:click="async_blogs"><a href="#" data-delta="-1">Previous</a></li>
+                        <li v-bind:class="is_next" v-on:click="async_blogs"><a href="#" data-delta="1">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            {% include 'blog/_sidebar.html' %}
+        </div>
+    </div>
+    {% block footer %}
+        <footer>
+            <p class="float-left">
+                <small> &copy; 2018 <a href="http://greyli.com" title="Written by Grey Li">Grey Li</a> -
+                    <a href="https://github.com/greyli/bluelog" title="Fork me on GitHub">GitHub</a> -
+                    <a href="http://helloflask.com" title="A HelloFlask project">HelloFlask</a>
+                </small>
+            </p>
+            <p class="float-right">
+            </p>
+        </footer>
+    {% endblock footer %}
+</main>
+
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.slim.min.js') }}"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vue.js') }}"></script>
+    <script type="text/javascript">
+        //数据
+        let Main = {
+            el: "#content",
+            data: {
+                page: 1,
+                total_pages:1,
+                is_previous: "disabled",
+                is_next: 'active',
+                posts:[
+                ]
+            },
+            methods: {
+                async_blogs: function(event) {
+                    let page = this.page + parseInt(event.target.dataset['delta']);
+                    if (page <=0 || page >= this.total_pages)
+                        return;
+                    $.ajax({
+                        "type" : "get",
+                        "url" : "/get_blogs/" + page,
+                        "dataType": "json",
+                        success : function (json_data) {
+                            let data = json_data['posts'];
+                            //总页码和当前页码
+                            content.total_pages = json_data['total_pages'];
+                            content.page = json_data['page'];
+                            content.is_previous = json_data['page'] <= 1? 'disabled': 'active';
+                            content.is_next = json_data['page'] >= json_data['total_pages']? 'disabled': 'active';
+                            content.posts = [];
+                            for (let i in data){
+                                content.posts.push(data[i]);
+                            }
+                        }
+                    });
+                }
+            },
+            mounted(){
+                $.ajax({
+                    "type" : "get",
+                    "url" : "/get_blogs/1",
+                    "dataType": "json",
+                    success : function (json_data) {
+                        let data = json_data['posts'];
+                        //总页码和当前页码
+                        content.total_pages = json_data['total_pages'];
+                        content.page = json_data['page'];
+                        content.is_previous = json_data['page'] <= 1? 'disabled': 'active';
+                        content.is_next = json_data['page'] >= json_data['total_pages']? 'disabled': 'active';
+                        content.posts = [];
+                        for (let i in data){
+                            content.posts.push(data[i]);
+                        }
+                    }
+                });
+            },
+            filters: {
+                truncate: function (text) {
+                    return text.slice(0, 250) + "..."
+                },
+                length: function (arr) {
+                    return arr.length;
+                }
+            }
+        };
+
+        let content = new Vue(Main);
+    </script>
+{% endblock %}
+</body>
+</html>

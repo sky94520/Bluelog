@@ -1,0 +1,68 @@
+{% macro qux(amount=1) %}
+    {% if amount == 1 %}
+        I am qux.
+    {% elif amount > 1 %}
+        We are quxs.
+    {% endif %}
+{% endmacro %}
+{# 加载文件 #}
+{% macro static_file(type, filename_or_url, local=True) %}
+    {% if local %}
+        {% set filename_or_url = url_for('static', filename=filename_or_url) %}
+    {% endif %}
+    {% if type == 'css' %}
+        <link rel="stylesheet" href="{{ filename_or_url }}" type="text/css">
+    {% elif type == 'js' %}
+        <script type="text/javascript" src="{{ filename_or_url }}"></script>
+    {% elif type == 'icon' %}
+        <link rel="icon" href="{{ filename_or_url }}">
+    {% endif %}
+{% endmacro %}
+
+{# 表单label-input渲染 #}
+{% macro form_field(field) %}
+    {{ field.label }}
+    {{ field(**kwargs) }}
+    {% if field.errors %}
+        {% for error in field.errors %}
+            <small>{{ error }}</small>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{# 分页 #}
+{% macro render_pagination(pagination, endpoint) %}
+    <nav aria-label="Page navigation">
+  <ul class="pagination">
+    <li>
+      <a href="{{ url_for('index', page=pagination.prev().page) }}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    {% for page in pagination.iter_pages() %}
+        {% if page %}
+            {% if page != pagination.page %}
+                <li>
+                    <a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>
+                </li>
+            {% else %}
+                <li><a href="">{{ page }}</a></li>
+            {% endif %}
+        {% else %}
+            <li><a>...</a></li>
+        {% endif %}
+    {% endfor %}
+    <li>
+        {% if pagination.has_next %}
+            <a href="{{ url_for('index', page=pagination.next().page) }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        {% else %}
+            <a href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        {% endif %}
+    </li>
+  </ul>
+</nav>
+{% endmacro %}
