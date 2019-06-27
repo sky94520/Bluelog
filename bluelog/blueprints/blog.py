@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, current_app
 from bluelog.models import Post
 import json
 
@@ -6,9 +6,12 @@ import json
 blog_bp = Blueprint('blog', __name__)
 
 
-@blog_bp.route('/')
-def index():
-    return render_template('blog/index.html')
+@blog_bp.route('/', defaults={'page': 1})
+@blog_bp.route('/page/<int:page>')
+def index(page):
+    per_page = current_app.config['BLUELOG_POST_PER_PAGE']
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page)
+    return render_template('blog/index.html', pagination=pagination, posts=pagination.items)
 
 
 @blog_bp.route('/category/<int:category_id>')
@@ -24,16 +27,8 @@ def about():
     return render_template('blog/about.html', form=form)
 
 
-@blog_bp.route('/get_blogs/<int:page>')
-def get_blogs(page):
-    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, 10)
-    posts = pagination.items
-    data = {
-        'total_pages': pagination.pages,
-        'page': pagination.page,
-        'posts': []
-    }
-    for post in posts:
-        data['posts'].append(post.to_json())
+@blog_bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
+def show_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('blog/post.html', post=post)
 
-    return json.dumps(data)
