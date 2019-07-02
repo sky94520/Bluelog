@@ -5,7 +5,7 @@ from bluelog.settings import config
 from bluelog.blueprints.blog import blog_bp
 from bluelog.blueprints.admin import admin_bp
 from bluelog.blueprints.auth import auth_bp
-from bluelog.extensions import db, mail, bootstrap, moment, ckeditor
+from bluelog.extensions import db, mail, bootstrap, moment, ckeditor, migrate
 from bluelog.models import Admin, Category
 
 
@@ -45,6 +45,7 @@ def register_extensions(app):
     bootstrap.init_app(app)
     moment.init_app(app)
     ckeditor.init_app(app)
+    migrate.init_app(app, db=db)
 
 
 def register_blueprints(app):

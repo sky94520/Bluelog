@@ -3,6 +3,7 @@ import random
 from sqlalchemy.exc import IntegrityError
 from bluelog.models import Admin, Category, Post, Comment
 from bluelog.extensions import db
+from bluelog.utils import slugify
 
 
 fake = Faker('zh_CN')
@@ -37,8 +38,10 @@ def fake_categories(count=10):
 def fake_posts(count=50):
     total_count = Category.query.count()
     for i in range(count):
+        title = fake.sentence()
         post = Post(
-            title=fake.sentence(),
+            title=title,
+            slug=slugify(title),
             body=fake.text(2000),
             category=Category.query.get(random.randint(1, total_count)),
             timestamp=fake.date_time_this_year()
