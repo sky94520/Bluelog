@@ -19,6 +19,7 @@ flask-moment = "*"
 unidecode = "*"
 flask-ckeditor = "*"
 flask-migrate = "*"
+flask-login = "*"
 
 [requires]
 python_version = "3.7"

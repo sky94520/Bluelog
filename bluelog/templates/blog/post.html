@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% from 'bootstrap/form.html' import render_form %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block content %}
     <div class="page-header">
@@ -32,6 +34,21 @@
                     </div>
                 </div>
             </div>
+        {# 评论 #}
+        {% include 'blog/_comments.html' %}
+        {% if comments %}
+            {{ render_pagination(pagination, fragment='#comments') }}
+        {% endif %}
+        {# 评论 #}
+        {% if request.args.get('reply') %}
+            <div class="alert alert-dark">
+            正在回复 <strong>{{ request.args.get('author') }}</strong>:
+            <a class="float-right" href="{{ url_for('blog.show_post', slug=post.slug) }}">取消</a>
+            </div>
+        {% endif %}
+        <div id="comment-form">
+            {{ render_form(form, action=request.full_path) }}
+        </div>
         </div>
         <div class="col-sm-4 sidebar">
             {% include 'blog/_sidebar.html' %}
