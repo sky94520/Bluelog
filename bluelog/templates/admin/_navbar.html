@@ -1,0 +1,18 @@
+<ul class="nav navbar-nav navbar-right">
+    {% if current_user.is_authenticated %}
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                New <span class="caret"></span>
+            </a>
+            <div class="dropdown-menu" aira-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{{ url_for('admin.new_post') }}">Post</a>
+                <a class="dropdown-item" href="{{ url_for('admin.new_category') }}">Category</a>
+            </div>
+        </li>
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="tree" aria-expanded="false">
+                Manage <span class="caret"></span>
+            </a>
+        </li>
+    {% endif %}
+</ul>
