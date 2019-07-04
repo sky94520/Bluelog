@@ -18,7 +18,7 @@ class PostForm(FlaskForm):
     body = CKEditorField('Body', validators=[DataRequired()])
     submit = SubmitField()
 
-    def __int__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__(*args, **kwargs)
         self.category.choices = [(category.id, category.name)
                                  for category in Category.query.order_by(Category.name).all()]

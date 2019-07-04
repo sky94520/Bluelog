@@ -6,7 +6,8 @@ from bluelog.blueprints.blog import blog_bp
 from bluelog.blueprints.admin import admin_bp
 from bluelog.blueprints.auth import auth_bp
 from bluelog.extensions import db, mail, bootstrap, moment, ckeditor, migrate, login_manager, csrf
-from bluelog.models import Admin, Category
+from bluelog.models import Admin, Category, Comment
+from flask_login import current_user
 
 
 def create_app(config_name=None):
@@ -68,7 +69,12 @@ def register_template_context(app):
     def make_template_context():
         admin = Admin.query.first()
         categories = Category.query.order_by(Category.name).all()
-        return dict(admin=admin, categories=categories)
+        # 未阅读评论
+        if current_user.is_authenticated:
+            unread_comments = Comment.query.filter_by(reviewed=False).count()
+        else:
+            unread_comments = None
+        return dict(admin=admin, categories=categories, unread_comments=unread_comments)
 
 
 def register_template_filter(app):
