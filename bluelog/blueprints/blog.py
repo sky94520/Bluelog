@@ -26,14 +26,6 @@ def show_category(category_id):
     return render_template('blog/category.html', category=category, pagination=pagination, posts=posts)
 
 
-@blog_bp.route('/about')
-def about():
-    # 测试
-    from bluelog.forms import LoginForm
-    form = LoginForm()
-    return render_template('blog/about.html', form=form)
-
-
 @blog_bp.route('/post/<slug>', methods=['GET', 'POST'])
 def show_post(slug):
     post = Post.query.filter_by(slug=slug).first_or_404()
