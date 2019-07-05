@@ -16,6 +16,11 @@ def index(page):
     return render_template('blog/index.html', pagination=pagination, posts=pagination.items)
 
 
+@blog_bp.route('/about')
+def about():
+    return render_template('blog/about.html')
+
+
 @blog_bp.route('/category/<int:category_id>')
 def show_category(category_id):
     category = Category.query.get_or_404(category_id)

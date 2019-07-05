@@ -46,9 +46,13 @@
             <a class="float-right" href="{{ url_for('blog.show_post', slug=post.slug) }}">取消</a>
             </div>
         {% endif %}
-        <div id="comment-form">
-            {{ render_form(form, action=request.full_path) }}
-        </div>
+        {% if post.can_comment %}
+            <div id="comment-form">
+                {{ render_form(form, action=request.full_path) }}
+            </div>
+        {% else %}
+            <div class="tip"><h5>评论功能已关闭.</h5></div>
+        {% endif %}
         </div>
         <div class="col-sm-4 sidebar">
             {% include 'blog/_sidebar.html' %}
