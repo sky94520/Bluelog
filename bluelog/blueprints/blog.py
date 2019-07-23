@@ -76,7 +76,7 @@ def show_post(slug):
         else:
             flash('Thanks, your comment will be published after reviewed.', 'info')
             # 发送提示邮件给管理员
-        return redirect(url_for('blog.show_post', slug=post.slug))
+        return redirect(url_for('blog.show_post', slug=post.slug) + '#comments')
 
     return render_template('blog/post.html', post=post, pagination=pagination,
                            comments=comments, form=form)

@@ -1,13 +1,16 @@
 import os
 import click
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from flask_login import current_user
+import logging
+from logging.handlers import RotatingFileHandler, SMTPHandler
+
 from bluelog.settings import config
 from bluelog.blueprints.blog import blog_bp
 from bluelog.blueprints.admin import admin_bp
 from bluelog.blueprints.auth import auth_bp
 from bluelog.extensions import db, mail, bootstrap, moment, ckeditor, migrate, login_manager, csrf
 from bluelog.models import Admin, Category, Comment
-from flask_login import current_user
 
 
 def create_app(config_name=None):
@@ -37,7 +40,37 @@ def create_app(config_name=None):
 
 
 def register_logging(app):
-    pass
+    class RequestFormatter(logging.Formatter):
+        def format(self, record):
+            record.url = request.url
+            record.remote_addr = request.remote_addr
+            return super(RequestFormatter, self).format(record)
+
+    request_formatter = RequestFormatter(
+        '[%(asctime)s] %(remote_addr)s requested % (url)s\n'
+        '%(levelname)s in %(module)s: %(message)s'
+    )
+    mail_handler = SMTPHandler(
+        mailhost=os.getenv('MAIL_SERVER'),
+        fromaddr=os.getenv('MAIL_USERNAME'),
+        toaddrs=os.getenv('BLUELOG_ADMIN_EMAIL'),
+        subject='Application Error',
+        credentials=(os.getenv('MAIL_USERNAME'), os.getenv('MAIL_PASSWORD'))
+    )
+    mail_handler.setLevel(logging.ERROR)
+    mail_handler.setFormatter(request_formatter)
+
+    app.logger.setLevel(logging.INFO)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler = RotatingFileHandler('logs/bluelog.log', maxBytes=10 * 1024 * 1024, backupCount=10)
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.INFO)
+
+    # 在调试状态下不会添加处理器
+    if not app.debug:
+        app.logger.addHandler(file_handler)
+        app.logger.addHandler(mail_handler)
 
 
 def register_extensions(app):

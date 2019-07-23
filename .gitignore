@@ -4,6 +4,7 @@ migrations/
 .idea/
 # Byte-compiled / optimized / DLL files
 __pycache__/
+*.log
 *.py[cod]
 *$py.class
 

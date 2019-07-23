@@ -1,5 +1,6 @@
 import os
 import sys
+import uuid
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -12,12 +13,14 @@ else:
 
 
 class BaseConfig(object):
-    SECRET_KEY = os.getenv('SECRET_KEY', 'dev key')
+    SECRET_KEY = os.getenv('SECRET_KEY', uuid.uuid4().hex)
 
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
+    # 数据库连接池的回收时间
+    SQLALCHEMY_POOL_RECYCLE = 280
 
     CKEDITOR_ENABLE_CSRF = True
     CKEDITOR_FILE_UPLOADER = 'admin.upload_image'
@@ -52,7 +55,8 @@ class TestingConfig(BaseConfig):
 
 
 class ProductionConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
+    # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
+    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data.db')
 
 
 config = {
