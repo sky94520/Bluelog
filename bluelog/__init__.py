@@ -176,7 +176,7 @@ def register_commands(app):
         if category is None:
             click.echo('Creating the default category...')
             category = Category(name='默认')
-            db.session.addd(category)
+            db.session.add(category)
 
         db.session.commit()
         click.echo('Done.')

@@ -1,6 +1,8 @@
 import os
 import sys
 import uuid
+import pymysql
+from config import MYSQL_PRODUCTION_URI
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -56,7 +58,9 @@ class TestingConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
-    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data.db')
+    # SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data.db')
+    # 更换数据库
+    SQLALCHEMY_DATABASE_URI = MYSQL_PRODUCTION_URI
 
 
 config = {
