@@ -1,10 +1,6 @@
-import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
+load_dotenv(find_dotenv(), override=True)
 
 from bluelog import create_app
-app = create_app('production')
+app = create_app()
