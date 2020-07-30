@@ -5,5 +5,11 @@ services:
   image: bluelog
   volumes:
    - .:/code
+ nginx:
+  build: ./nginx
   ports:
    - "7777:7777"
+  volumes:
+   - .:/code
+  links:
+   - "web:web"
