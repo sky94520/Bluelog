@@ -7,13 +7,14 @@ from urllib.parse import urlparse, urljoin
 _punct_re = re.compile(r'[\t !"#$&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
 
-def slugify(text, delim=u'-'):
+def slugify(text, delim=u'-', max_len=None):
     """Generates and ASCII-only slug."""
     result = []
     for word in _punct_re.split(text.lower()):
         result.extend(unidecode(word).lower().split())
 
-    return str(delim.join(result))
+    slug = str(delim.join(result))
+    return slug[:max_len] if max_len else slug
 
 
 def is_safe_url(target):

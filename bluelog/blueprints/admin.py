@@ -47,7 +47,7 @@ def new_post():
         title = form.title.data
         body = form.body.data
         category = Category.query.get(form.category.data)
-        post = Post(title=title, body=body, slug=slugify(title), category=category)
+        post = Post(title=title, body=body, slug=slugify(title, max_len=240), category=category)
 
         db.session.add(post)
         db.session.commit()
@@ -63,7 +63,7 @@ def edit_post(post_id):
     post = Post.query.get_or_404(post_id)
     if form.validate_on_submit():
         post.title = form.title.data
-        post.slug = slugify(post.title)
+        post.slug = slugify(post.title, max_len=240)
         post.body = form.body.data
         post.category = Category.query.get(form.category.data)
         db.session.commit()
