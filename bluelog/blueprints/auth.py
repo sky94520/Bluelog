@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for, flash, render_template
+from flask import Blueprint, redirect, url_for, flash, render_template, request
 from flask_login import current_user, login_user, login_required, logout_user
 
 from bluelog.forms import LoginForm
@@ -14,9 +14,9 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('blog.index'))
 
-    form = LoginForm()
+    form = LoginForm(request.form)
 
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate():
         username = form.username.data
         password = form.password.data
         remember = form.remember.data
