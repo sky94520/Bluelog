@@ -40,5 +40,3 @@ def logout():
     logout_user()
     flash('Logout success.', 'info')
     return redirect_back()
-
-
