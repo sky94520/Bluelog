@@ -14,9 +14,8 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('blog.index'))
 
-    form = LoginForm(request.form)
-
-    if request.method == 'POST' and form.validate():
+    form = LoginForm()
+    if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
         remember = form.remember.data

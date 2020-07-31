@@ -1,6 +1,5 @@
 import os
 import sys
-import uuid
 import pymysql
 from config import MYSQL_PRODUCTION_URI
 
@@ -15,7 +14,7 @@ else:
 
 
 class BaseConfig(object):
-    SECRET_KEY = os.getenv('SECRET_KEY', uuid.uuid4().hex)
+    SECRET_KEY = os.getenv('SECRET_KEY', 'secret key')
 
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 

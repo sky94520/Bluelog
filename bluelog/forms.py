@@ -1,12 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import Form
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, ValidationError, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, Length, Email, Optional, URL
 from flask_ckeditor import CKEditorField
 from bluelog.models import Category
 
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(1, 20)])
     password = PasswordField('Password', validators=[DataRequired(), Length(8, 128)])
     remember = BooleanField('remember me')
