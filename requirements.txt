@@ -4,7 +4,7 @@ blinker==1.4
 Bootstrap-Flask==1.0.10
 cffi==1.14.1
 Click==7.0
-cryptography==3.0
+cryptography==3.2
 Faker==1.0.7
 Flask==1.0.3
 Flask-CKEditor==0.4.3
